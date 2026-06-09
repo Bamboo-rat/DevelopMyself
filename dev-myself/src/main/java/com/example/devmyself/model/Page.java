@@ -1,5 +1,6 @@
 package com.example.devmyself.model;
 
+import com.example.devmyself.model.enums.PageKind;
 import com.example.devmyself.model.enums.PageType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -60,6 +61,10 @@ public class Page extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "page_type", nullable = false, length = 50)
     private PageType pageType = PageType.NOTE;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "page_kind", length = 50)
+    private PageKind pageKind;
 
     /**
      * Thứ tự trong sidebar.

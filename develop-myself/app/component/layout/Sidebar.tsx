@@ -31,11 +31,13 @@ import { SettingsModal } from './SettingsModal';
 const CreatePageModal = ({ isOpen, onClose, onSubmit, parentId }: any) => {
   const [title, setTitle] = useState('');
   const [pageType, setPageType] = useState('NOTE');
+  const [pageKind, setPageKind] = useState<'DOCUMENT' | 'FOLDER'>('DOCUMENT');
   
   useEffect(() => {
     if (isOpen) {
       setTitle('');
       setPageType('NOTE');
+      setPageKind('DOCUMENT');
     }
   }, [isOpen]);
 
@@ -49,43 +51,70 @@ const CreatePageModal = ({ isOpen, onClose, onSubmit, parentId }: any) => {
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#023468]/70 mb-1">Tên trang</label>
+            <label className="block text-sm font-medium text-[#023468]/70 mb-1">Loại tạo</label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="pageKind" 
+                  checked={pageKind === 'DOCUMENT'} 
+                  onChange={() => setPageKind('DOCUMENT')}
+                  className="text-[#82CAFA] focus:ring-[#82CAFA]"
+                />
+                <span className="text-sm font-medium text-[#023468]">Tài liệu</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="pageKind" 
+                  checked={pageKind === 'FOLDER'} 
+                  onChange={() => setPageKind('FOLDER')}
+                  className="text-[#82CAFA] focus:ring-[#82CAFA]"
+                />
+                <span className="text-sm font-medium text-[#023468]">Thư mục</span>
+              </label>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#023468]/70 mb-1">Tên {pageKind === 'FOLDER' ? 'thư mục' : 'trang'}</label>
             <input 
               autoFocus
               type="text" 
-              placeholder="Nhập tên trang..." 
+              placeholder={`Nhập tên ${pageKind === 'FOLDER' ? 'thư mục' : 'trang'}...`} 
               className="w-full px-4 py-2 border border-[#AED8E6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#82CAFA] text-[#023468]"
               value={title}
               onChange={e => setTitle(e.target.value)}
               onKeyDown={e => {
                 if (e.key === 'Enter' && title.trim()) {
-                  onSubmit(title.trim(), parentId, pageType);
+                  onSubmit(title.trim(), parentId, pageType, pageKind);
                 }
               }}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-[#023468]/70 mb-1">Loại trang</label>
-            <select
-              value={pageType}
-              onChange={e => setPageType(e.target.value)}
-              className="w-full px-4 py-2 border border-[#AED8E6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#82CAFA] text-[#023468] bg-white"
-            >
-              <option value="NOTE">Ghi chú (Note)</option>
-              <option value="TASK_LIST">Công việc (Task List)</option>
-              <option value="PROJECT">Dự án (Project)</option>
-              <option value="GOAL">Mục tiêu (Goal)</option>
-              <option value="JOURNAL">Nhật ký (Journal)</option>
-              <option value="ROADMAP">Lộ trình (Roadmap)</option>
-              <option value="KNOWLEDGE">Kiến thức (Knowledge)</option>
-            </select>
-          </div>
+          {pageKind === 'DOCUMENT' && (
+            <div>
+              <label className="block text-sm font-medium text-[#023468]/70 mb-1">Loại trang</label>
+              <select
+                value={pageType}
+                onChange={e => setPageType(e.target.value)}
+                className="w-full px-4 py-2 border border-[#AED8E6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#82CAFA] text-[#023468] bg-white"
+              >
+                <option value="NOTE">Ghi chú (Note)</option>
+                <option value="TASK_LIST">Công việc (Task List)</option>
+                <option value="PROJECT">Dự án (Project)</option>
+                <option value="GOAL">Mục tiêu (Goal)</option>
+                <option value="JOURNAL">Nhật ký (Journal)</option>
+                <option value="ROADMAP">Lộ trình (Roadmap)</option>
+                <option value="KNOWLEDGE">Kiến thức (Knowledge)</option>
+              </select>
+            </div>
+          )}
         </div>
         <div className="flex justify-end gap-3 mt-6">
           <button onClick={onClose} className="px-4 py-2 text-[#023468]/70 hover:bg-gray-100 rounded-lg transition-colors font-medium">Hủy</button>
           <button 
             disabled={!title.trim()}
-            onClick={() => onSubmit(title.trim(), parentId, pageType)} 
+            onClick={() => onSubmit(title.trim(), parentId, pageType, pageKind)} 
             className="px-4 py-2 bg-[#82CAFA] hover:bg-[#023468] text-white rounded-lg transition-colors font-medium disabled:opacity-50"
           >
             Tạo mới
@@ -141,34 +170,34 @@ const PageItem = ({
               <GripVertical size={14} />
             </div>
 
+            {/* Icon & Title */}
             <div 
-              className="flex items-center gap-2 overflow-hidden flex-1" 
-              onClick={() => navigate(`/dashboard/${page.id}`)}
+              className="flex items-center gap-2 flex-1 min-w-0"
+              onClick={() => {
+                if (page.pageKind === 'FOLDER') {
+                  setIsExpanded(!isExpanded);
+                } else {
+                  navigate(`/dashboard/${page.id}`);
+                }
+              }}
             >
-              {/* Icon Mở/Đóng (chỉ hiện nếu có trang con) */}
-              <div 
-                className="w-4 flex items-center justify-center shrink-0 text-[#82CAFA] hover:text-[#023468] transition-colors"
+              <button 
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (hasChildren) setIsExpanded(!isExpanded);
+                  setIsExpanded(!isExpanded);
                 }}
+                className={`p-0.5 rounded hover:bg-[#82CAFA]/20 text-[#023468]/40 hover:text-[#0A529B] transition-colors ${hasChildren ? 'visible' : 'invisible'}`}
               >
-                {hasChildren ? (
-                  isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />
-                ) : null}
-              </div>
+                <ChevronRight size={14} className={`transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
+              </button>
               
-              {/* Icon & Tên trang */}
-              <div className="flex items-center truncate">
-                {page.icon && (
-                  <span className="mr-2 text-[#023468]">
-                    <DynamicIcon name={page.icon} size={16} />
-                  </span>
-                )}
-                {!page.icon && (
-                  <span className="mr-2 text-[#82CAFA]">
-                    {hasChildren ? <FolderOpen size={16} /> : <FileText size={16} />}
-                  </span>
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {page.icon ? (
+                  <DynamicIcon name={page.icon} className="w-4 h-4 shrink-0" />
+                ) : page.pageKind === 'FOLDER' ? (
+                  isExpanded ? <FolderOpen size={16} className="text-[#82CAFA] shrink-0" /> : <FolderOpen size={16} className="text-[#82CAFA] shrink-0" />
+                ) : (
+                  <FileText size={16} className="text-[#82CAFA] shrink-0" />
                 )}
                 {isEditingTitle ? (
                   <input 
@@ -382,19 +411,20 @@ const Sidebar = () => {
     setModalOpen(true);
   };
 
-  const handleCreatePage = async (title: string, parentId: string | null, pageType: string = 'NOTE') => {
+  const handleCreatePage = async (title: string, parentId: string | null, pageType: string, pageKind: 'DOCUMENT' | 'FOLDER') => {
     try {
-      const res: any = await pageService.createPage({ title, parentId, pageType });
-      if (res.success && res.data) {
-        toast.success('Đã tạo trang mới');
+      const res: any = await pageService.createPage({ title, parentId, pageType: pageKind === 'FOLDER' ? undefined : pageType, pageKind });
+      if (res.success) {
+        toast.success(`Tạo ${pageKind === 'FOLDER' ? 'thư mục' : 'trang'} thành công!`);
         fetchPages();
-        // Chuyển hướng ngay tới trang vừa tạo
-        navigate(`/dashboard/${res.data.id}`);
+        setModalOpen(false);
+        setTargetParentId(null);
+        if (pageKind !== 'FOLDER') {
+          navigate(`/dashboard/${res.data.id}`);
+        }
       }
-    } catch (err: any) {
-      toast.error(err?.message || 'Không thể tạo trang');
-    } finally {
-      setModalOpen(false);
+    } catch (error) {
+      toast.error('Lỗi khi tạo mới');
     }
   };
 

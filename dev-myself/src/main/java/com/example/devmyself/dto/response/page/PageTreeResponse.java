@@ -1,5 +1,6 @@
 package com.example.devmyself.dto.response.page;
 
+import com.example.devmyself.model.enums.PageKind;
 import com.example.devmyself.model.enums.PageType;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class PageTreeResponse {
     private String title;
     private String icon;
     private PageType pageType;
+    private PageKind pageKind;
     private Integer sortOrder;
     private Integer depth;
 

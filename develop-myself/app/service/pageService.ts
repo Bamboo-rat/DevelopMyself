@@ -5,6 +5,7 @@ export interface PageTreeResponse {
   title: string;
   icon?: string;
   pageType: string;
+  pageKind?: 'DOCUMENT' | 'FOLDER';
   sortOrder: number;
   depth: number;
   children: PageTreeResponse[];
@@ -14,6 +15,7 @@ export interface CreatePageRequest {
   title: string;
   parentId?: string | null;
   pageType?: string;
+  pageKind?: 'DOCUMENT' | 'FOLDER';
   icon?: string;
 }
 

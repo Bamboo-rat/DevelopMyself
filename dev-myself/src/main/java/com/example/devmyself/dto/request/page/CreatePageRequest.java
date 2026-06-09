@@ -1,5 +1,6 @@
 package com.example.devmyself.dto.request.page;
 
+import com.example.devmyself.model.enums.PageKind;
 import com.example.devmyself.model.enums.PageType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,6 +22,8 @@ public class CreatePageRequest {
     private UUID parentId;
 
     private PageType pageType = PageType.NOTE;
+
+    private PageKind pageKind;
 
     /**
      * Emoji hoặc URL icon (có thể null)

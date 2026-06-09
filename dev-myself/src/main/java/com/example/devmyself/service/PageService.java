@@ -8,6 +8,7 @@ import com.example.devmyself.exception.ErrorCode;
 import com.example.devmyself.model.Page;
 import com.example.devmyself.model.PageTemplate;
 import com.example.devmyself.model.User;
+import com.example.devmyself.model.enums.PageKind;
 import com.example.devmyself.reponsitory.PageRepository;
 import com.example.devmyself.reponsitory.PageTemplateRepository;
 import jakarta.transaction.Transactional;
@@ -47,14 +48,17 @@ public class PageService {
         // Auto-set sortOrder = max + 1 trong cùng cấp
         int nextSortOrder = pageRepository.findMaxSortOrder(user, request.getParentId()) + 1;
 
+        PageKind kind = request.getPageKind() != null ? request.getPageKind() : PageKind.DOCUMENT;
+        
         Page page = Page.builder()
                 .user(user)
                 .parent(parent)
                 .title(request.getTitle())
-                .content(resolveInitialContent(request))   // content từ template hoặc rỗng
+                .content(kind == PageKind.FOLDER ? new java.util.HashMap<>() : resolveInitialContent(request))
                 .icon(request.getIcon())
                 .pageType(request.getPageType() != null ? request.getPageType()
                         : com.example.devmyself.model.enums.PageType.NOTE)
+                .pageKind(kind)
                 .sortOrder(nextSortOrder)
                 .depth(depth)
                 .isFavorite(false)
@@ -233,11 +237,22 @@ public class PageService {
         UUID newParentId = newParent != null ? newParent.getId() : null;
         int nextSortOrder = pageRepository.findMaxSortOrder(user, newParentId) + 1;
 
+        String oldPath = page.getPath();
+        int oldDepth = page.getDepth();
+
         page.setParent(newParent);
         page.setDepth(newDepth);
         page.setSortOrder(nextSortOrder);
-        page.setPath(buildPath(newParent, page.getId()));
+        String newPath = buildPath(newParent, page.getId());
+        page.setPath(newPath);
         page = pageRepository.save(page);
+
+        // Nếu page có children, cập nhật path và depth của toàn bộ descendants
+        if (oldPath != null) {
+            String pathPrefix = oldPath + "/%";
+            int depthDelta = newDepth - oldDepth;
+            pageRepository.updateDescendantsPathAndDepth(oldPath, newPath, depthDelta, pathPrefix);
+        }
 
         log.info("Di chuyển page: pageId={}, newParentId={}", pageId, request.getNewParentId());
         return mapToDetail(page);
@@ -390,6 +405,7 @@ public class PageService {
                 .icon(page.getIcon())
                 .coverUrl(page.getCoverUrl())
                 .pageType(page.getPageType())
+                .pageKind(page.getPageKind())
                 .sortOrder(page.getSortOrder())
                 .depth(page.getDepth())
                 .path(page.getPath())
@@ -406,6 +422,7 @@ public class PageService {
                 .title(page.getTitle())
                 .icon(page.getIcon())
                 .pageType(page.getPageType())
+                .pageKind(page.getPageKind())
                 .sortOrder(page.getSortOrder())
                 .depth(page.getDepth())
                 .build();

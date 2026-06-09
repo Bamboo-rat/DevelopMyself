@@ -58,6 +58,18 @@ public interface PageRepository extends JpaRepository<Page, UUID> {
                            @Param("ancestorPath") String ancestorPath);
 
     /**
+     * Cập nhật path và depth cho tất cả descendants khi di chuyển cha
+     */
+    @Modifying
+    @Query("UPDATE Page p SET p.depth = p.depth + :depthDelta, " +
+           "p.path = CONCAT(:newPath, SUBSTRING(p.path, LENGTH(:oldPath) + 1)) " +
+           "WHERE p.path LIKE :pathPrefix AND p.isDeleted = false")
+    void updateDescendantsPathAndDepth(@Param("oldPath") String oldPath,
+                                       @Param("newPath") String newPath,
+                                       @Param("depthDelta") int depthDelta,
+                                       @Param("pathPrefix") String pathPrefix);
+
+    /**
      * Tìm kiếm trang theo từ khóa (tiêu đề & nội dung) và bộ lọc loại trang.
      */
     @Query(value = "SELECT * FROM pages p WHERE p.user_id = :userId AND p.is_deleted = false " +

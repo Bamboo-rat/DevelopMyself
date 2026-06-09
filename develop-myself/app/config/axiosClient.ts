@@ -84,10 +84,10 @@ axiosClient.interceptors.response.use(
       }
 
       try {
-        const { data } = await axios.post(`http://localhost:8080/api/v1/auth/refresh?refreshToken=${refreshToken}`);
+        const { data } = await axios.post(`http://localhost:8080/api/v1/auth/refresh-token?refreshToken=${refreshToken}`);
 
         // Cập nhật token mới (Backend trả về ApiResponse bọc bên ngoài)
-        const newAccessToken = data.data.token;
+        const newAccessToken = data.data.accessToken;
         const newRefreshToken = data.data.refreshToken;
 
         localStorage.setItem('token', newAccessToken);
