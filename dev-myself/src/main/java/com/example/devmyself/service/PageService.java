@@ -14,6 +14,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -100,6 +102,16 @@ public class PageService {
         }
 
         return roots;
+    }
+
+    // ============================================================
+    // 2.3.1 Tìm kiếm toàn cục (Global Search)
+    // ============================================================
+    public List<PageTreeResponse> searchPages(String keyword, com.example.devmyself.model.enums.PageType type, User user) {
+        String typeStr = type != null ? type.name() : null;
+        String kw = keyword != null ? keyword.trim() : "";
+        List<Page> results = pageRepository.searchPages(user.getId(), kw, typeStr);
+        return results.stream().map(this::mapToTree).collect(Collectors.toList());
     }
 
     // ============================================================
@@ -229,6 +241,48 @@ public class PageService {
 
         log.info("Di chuyển page: pageId={}, newParentId={}", pageId, request.getNewParentId());
         return mapToDetail(page);
+    }
+
+    // ============================================================
+    // 2.12  Duplicate page
+    // ============================================================
+    @Transactional
+    public PageDetailResponse duplicatePage(UUID pageId, User user) {
+        Page original = findAndVerifyPage(pageId, user);
+
+        UUID parentId = original.getParent() != null ? original.getParent().getId() : null;
+        int nextSortOrder = pageRepository.findMaxSortOrder(user, parentId) + 1;
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> newContent = null;
+        try {
+            if (original.getContent() != null) {
+                String json = mapper.writeValueAsString(original.getContent());
+                newContent = mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+            }
+        } catch (Exception e) {
+            log.error("Lỗi khi duplicate content", e);
+        }
+
+        Page copy = Page.builder()
+                .user(user)
+                .parent(original.getParent())
+                .title(original.getTitle() + " (Copy)")
+                .pageType(original.getPageType())
+                .icon(original.getIcon())
+                .content(newContent)
+                .depth(original.getDepth())
+                .sortOrder(nextSortOrder)
+                .isArchived(false)
+                .isDeleted(false)
+                .build();
+
+        copy = pageRepository.save(copy);
+        copy.setPath(buildPath(original.getParent(), copy.getId()));
+        copy = pageRepository.save(copy);
+
+        log.info("Duplicate page: oldId={}, newId={}", pageId, copy.getId());
+        return mapToDetail(copy);
     }
 
     // ============================================================

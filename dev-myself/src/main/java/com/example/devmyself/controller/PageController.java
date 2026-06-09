@@ -52,6 +52,20 @@ public class PageController {
     }
 
     /**
+     * 2.3.1 Tìm kiếm page toàn cục
+     * GET /api/v1/pages/search?keyword=abc&type=NOTE
+     */
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<PageTreeResponse>>> searchPages(
+            @AuthenticationPrincipal User currentUser,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) com.example.devmyself.model.enums.PageType type) {
+
+        List<PageTreeResponse> results = pageService.searchPages(keyword, type, currentUser);
+        return ResponseEntity.ok(ApiResponse.success(results));
+    }
+
+    /**
      * 2.4  Xem chi tiết page
      * GET /api/v1/pages/{id}
      */
@@ -160,6 +174,19 @@ public class PageController {
 
         PageDetailResponse page = pageService.moveToParent(id, currentUser, request);
         return ResponseEntity.ok(ApiResponse.success("Di chuyển trang thành công", page));
+    }
+
+    /**
+     * 2.12 Nhân bản trang
+     * POST /api/v1/pages/{id}/duplicate
+     */
+    @PostMapping("/{id}/duplicate")
+    public ResponseEntity<ApiResponse<PageDetailResponse>> duplicatePage(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable UUID id) {
+
+        PageDetailResponse page = pageService.duplicatePage(id, currentUser);
+        return ResponseEntity.ok(ApiResponse.success("Nhân bản trang thành công", page));
     }
 
     /**

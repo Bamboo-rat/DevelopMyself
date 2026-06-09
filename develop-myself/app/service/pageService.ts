@@ -23,6 +23,10 @@ export const pageService = {
     return axiosClient.get('/pages/tree');
   },
 
+  searchPages: (keyword?: string, type?: string) => {
+    return axiosClient.get('/pages/search', { params: { keyword, type } });
+  },
+
   // Tạo trang mới
   createPage: (data: CreatePageRequest) => {
     return axiosClient.post('/pages', data);
@@ -53,8 +57,23 @@ export const pageService = {
     return axiosClient.patch(`/pages/${id}/icon`, { icon });
   },
 
-  // Cập nhật loại trang
+  updateSortOrder: (id: string, sortOrder: number) => {
+    return axiosClient.patch(`/pages/${id}/sort-order`, { sortOrder });
+  },
+
+  moveToParent: (id: string, newParentId: string | null) => {
+    return axiosClient.patch(`/pages/${id}/parent`, { newParentId });
+  },
+
   updatePageType: (id: string, pageType: string) => {
     return axiosClient.patch(`/pages/${id}/type`, { pageType });
+  },
+
+  updateArchive: (id: string, archived: boolean) => {
+    return axiosClient.patch(`/pages/${id}/archive`, { archived });
+  },
+
+  duplicatePage: (id: string) => {
+    return axiosClient.post(`/pages/${id}/duplicate`);
   }
 };

@@ -53,10 +53,19 @@ public interface PageRepository extends JpaRepository<Page, UUID> {
     void softDeleteByPathPrefix(@Param("pathPrefix") String pathPrefix,
                                 @Param("deletedAt") LocalDateTime deletedAt);
 
-    /**
-     * Kiểm tra page có phải là ancestor của target không (tránh circular reference)
-     */
     @Query("SELECT COUNT(p) > 0 FROM Page p WHERE p.id = :targetId AND p.path LIKE :ancestorPath")
     boolean isDescendantOf(@Param("targetId") UUID targetId,
                            @Param("ancestorPath") String ancestorPath);
+
+    /**
+     * Tìm kiếm trang theo từ khóa (tiêu đề & nội dung) và bộ lọc loại trang.
+     */
+    @Query(value = "SELECT * FROM pages p WHERE p.user_id = :userId AND p.is_deleted = false " +
+            "AND (:pageType IS NULL OR p.page_type = :pageType) " +
+            "AND (:keyword IS NULL OR :keyword = '' OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(CAST(p.content AS text)) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "ORDER BY p.updated_at DESC LIMIT 50", nativeQuery = true)
+    List<Page> searchPages(@Param("userId") UUID userId, 
+                           @Param("keyword") String keyword, 
+                           @Param("pageType") String pageType);
 }

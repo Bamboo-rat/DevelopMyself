@@ -36,7 +36,7 @@ export const NotionEditor = ({ initialBlocks, onSave }: NotionEditorProps) => {
         if ((window as any).saveContentTimeout) clearTimeout((window as any).saveContentTimeout);
         (window as any).saveContentTimeout = setTimeout(() => {
           onSave(editor.document);
-        }, 1000);
+        }, 500);
       }}
     />
   );

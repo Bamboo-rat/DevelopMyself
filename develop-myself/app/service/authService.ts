@@ -11,6 +11,10 @@ export const authService = {
 
   // (Ví dụ) Nếu sau này cần lấy profile
   getProfile: () => {
-    return axiosClient.get('/users/profile');
+    return axiosClient.get('/users/me');
+  },
+
+  logout: () => {
+    return axiosClient.post('/auth/logout');
   }
 };

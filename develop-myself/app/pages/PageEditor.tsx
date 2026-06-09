@@ -171,17 +171,39 @@ const PageRenderer = () => {
     }
   };
 
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const saveTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    };
+  }, []);
+
   const handlePageUpdate = (updatedFields: any) => {
     setPage((prev: any) => ({ ...prev, ...updatedFields }));
   };
 
-  const handleSaveContent = async (newContent: any) => {
-    try {
-      setPage((prev: any) => ({ ...prev, content: newContent }));
-      await pageService.updateContent(pageId!, newContent);
-    } catch (err) {
-      toast.error('Lỗi khi lưu nội dung');
+  const handleSaveContent = (newContent: any) => {
+    setPage((prev: any) => ({ ...prev, content: newContent }));
+    setSaveStatus('saving');
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
     }
+
+    saveTimeoutRef.current = setTimeout(async () => {
+      try {
+        await pageService.updateContent(pageId!, newContent);
+        setSaveStatus('saved');
+        setTimeout(() => {
+          setSaveStatus((prev) => prev === 'saved' ? 'idle' : prev);
+        }, 2000);
+      } catch (err) {
+        toast.error('Lỗi khi lưu tự động');
+        setSaveStatus('error');
+      }
+    }, 3000);
   };
 
   if (loading) {
@@ -214,7 +236,7 @@ const PageRenderer = () => {
 
   return (
     <div className="h-full flex flex-col p-8 lg:px-8 xl:px-10 animate-in fade-in duration-300">
-      <PageHeader page={page} onPageUpdate={handlePageUpdate} />
+      <PageHeader page={page} onPageUpdate={handlePageUpdate} saveStatus={saveStatus} />
 
       {isEmptyPage ? (
         <div className="flex-1">

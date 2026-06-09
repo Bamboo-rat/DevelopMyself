@@ -7,9 +7,10 @@ import { DynamicIcon, AVAILABLE_ICONS } from '~/component/ui/DynamicIcon';
 interface PageHeaderProps {
   page: any;
   onPageUpdate: (updatedFields: any) => void;
+  saveStatus?: 'idle' | 'saving' | 'saved' | 'error';
 }
 
-export const PageHeader = ({ page, onPageUpdate }: PageHeaderProps) => {
+export const PageHeader = ({ page, onPageUpdate, saveStatus = 'idle' }: PageHeaderProps) => {
   const [localTitle, setLocalTitle] = useState(page.title || '');
   const [showIconPicker, setShowIconPicker] = useState(false);
 
@@ -58,9 +59,19 @@ export const PageHeader = ({ page, onPageUpdate }: PageHeaderProps) => {
         <span className="px-2.5 py-1 text-[11px] font-bold tracking-wider uppercase bg-[#E8F1F5] text-[#0A529B] rounded-md border border-[#AED8E6]/50">
           {page.pageType || 'NOTE'}
         </span>
-        {page.updatedAt && (
+        {page.updatedAt && saveStatus !== 'saving' && saveStatus !== 'saved' && (
           <span className="text-xs text-[#023468]/50 font-medium">
-            Last updated: {formatDate(page.updatedAt)}
+            Lưu lần cuối: {formatDate(page.updatedAt)}
+          </span>
+        )}
+        {saveStatus === 'saving' && (
+          <span className="text-xs text-amber-500 font-medium flex items-center gap-1">
+            <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping"></span> Đang lưu...
+          </span>
+        )}
+        {saveStatus === 'saved' && (
+          <span className="text-xs text-emerald-500 font-medium flex items-center gap-1">
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> Đã tự động lưu
           </span>
         )}
       </div>

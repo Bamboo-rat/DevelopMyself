@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import type { DropResult } from '@hello-pangea/dnd';
 import { 
   ChevronRight, 
   ChevronDown, 
@@ -10,12 +13,19 @@ import {
   FolderOpen,
   LogOut,
   User as UserIcon,
-  Trash2
+  Trash2,
+  GripVertical,
+  Copy,
+  Archive,
+  Edit2
 } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { pageService, type PageTreeResponse } from '~/service/pageService';
+import { authService } from '~/service/authService';
 import toast from 'react-hot-toast';
 import { DynamicIcon } from '~/component/ui/DynamicIcon';
+import { GlobalSearchModal } from './GlobalSearchModal';
+import { SettingsModal } from './SettingsModal';
 
 // Modal Thêm Trang
 const CreatePageModal = ({ isOpen, onClose, onSubmit, parentId }: any) => {
@@ -87,96 +97,186 @@ const CreatePageModal = ({ isOpen, onClose, onSubmit, parentId }: any) => {
 }
 
 // Component hiển thị 1 trang
-const PageItem = ({ page, level = 0, onAddSubPage, onDeletePage }: { page: PageTreeResponse, level?: number, onAddSubPage: (parentId: string) => void, onDeletePage: (id: string) => void }) => {
+const PageItem = ({ 
+  page, index, level = 0, 
+  onAddSubPage, onDeletePage, onRenamePage, onDuplicatePage, onArchivePage 
+}: { 
+  page: PageTreeResponse, index: number, level?: number, 
+  onAddSubPage: (parentId: string) => void, 
+  onDeletePage: (id: string) => void,
+  onRenamePage: (id: string, title: string) => void,
+  onDuplicatePage: (id: string) => void,
+  onArchivePage: (id: string) => void
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [editTitleValue, setEditTitleValue] = useState(page.title);
+
   const hasChildren = page.children && page.children.length > 0;
   const navigate = useNavigate();
 
   return (
-    <div>
-      <div 
-        className="group flex items-center justify-between py-1.5 px-2 rounded-md hover:bg-[#AED8E6]/30 cursor-pointer text-[#023468] transition-colors relative"
-        style={{ paddingLeft: `${level * 12 + 8}px` }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => { setIsHovered(false); setShowOptions(false); }}
-      >
-        <div 
-          className="flex items-center gap-2 overflow-hidden flex-1" 
-          onClick={() => navigate(`/dashboard/${page.id}`)}
+    <Draggable draggableId={page.id} index={index}>
+      {(provided, snapshot) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          style={{ ...provided.draggableProps.style }}
         >
-          {/* Icon Mở/Đóng (chỉ hiện nếu có trang con) */}
           <div 
-            className="w-4 flex items-center justify-center shrink-0 text-[#82CAFA] hover:text-[#023468] transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (hasChildren) setIsExpanded(!isExpanded);
-            }}
+            className={`group flex items-center justify-between py-1.5 px-2 rounded-md hover:bg-[#AED8E6]/30 cursor-pointer text-[#023468] transition-colors relative ${snapshot.isDragging ? 'bg-[#F8FBFC] shadow-md z-50 ring-1 ring-[#82CAFA]' : ''}`}
+            style={{ paddingLeft: `${level * 12 + 8}px` }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => { setIsHovered(false); setShowOptions(false); }}
           >
-            {hasChildren ? (
-              isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />
-            ) : null}
-          </div>
-          
-          {/* Icon & Tên trang */}
-          <div className="flex items-center truncate">
-            {page.icon && (
-              <span className="mr-2 text-[#023468]">
-                <DynamicIcon name={page.icon} size={16} />
-              </span>
-            )}
-            {!page.icon && (
-              <span className="mr-2 text-[#82CAFA]">
-                {hasChildren ? <FolderOpen size={16} /> : <FileText size={16} />}
-              </span>
-            )}
-            <span className="text-sm truncate select-none font-medium text-[#023468]/90">{page.title}</span>
-          </div>
-        </div>
-
-        {/* Nút thao tác (hiện khi hover) */}
-        <div className={`flex items-center gap-1 shrink-0 ${isHovered ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
-          <button 
-            className="p-1 hover:bg-[#AED8E6]/50 rounded text-[#023468]/60 hover:text-[#023468]"
-            title="Thêm trang con"
-            onClick={(e) => { e.stopPropagation(); setIsExpanded(true); onAddSubPage(page.id); }}
-          >
-            <Plus size={14} />
-          </button>
-          
-          <div className="relative">
-            <button 
-              className="p-1 hover:bg-[#AED8E6]/50 rounded text-[#023468]/60 hover:text-[#023468]"
-              title="Tùy chọn"
-              onClick={(e) => { e.stopPropagation(); setShowOptions(!showOptions); }}
+            {/* Drag Handle */}
+            <div 
+              {...provided.dragHandleProps} 
+              className={`mr-1 text-[#82CAFA] hover:text-[#0A529B] ${isHovered ? 'opacity-100' : 'opacity-0'} transition-opacity`}
+              onClick={(e) => e.stopPropagation()}
             >
-              <MoreHorizontal size={14} />
-            </button>
-            
-            {showOptions && (
-              <div className="absolute right-0 top-full mt-1 w-32 bg-white rounded-md shadow-lg border border-[#AED8E6]/40 py-1 z-50">
-                <button 
-                  className="w-full text-left px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                  onClick={(e) => { e.stopPropagation(); setShowOptions(false); onDeletePage(page.id); }}
-                >
-                  <Trash2 size={14} /> Xóa trang
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+              <GripVertical size={14} />
+            </div>
 
-      {/* Hiển thị đệ quy các trang con */}
-      {hasChildren && isExpanded && (
-        <div className="mt-0.5">
-          {page.children.map(child => (
-            <PageItem key={child.id} page={child} level={level + 1} onAddSubPage={onAddSubPage} onDeletePage={onDeletePage} />
-          ))}
+            <div 
+              className="flex items-center gap-2 overflow-hidden flex-1" 
+              onClick={() => navigate(`/dashboard/${page.id}`)}
+            >
+              {/* Icon Mở/Đóng (chỉ hiện nếu có trang con) */}
+              <div 
+                className="w-4 flex items-center justify-center shrink-0 text-[#82CAFA] hover:text-[#023468] transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (hasChildren) setIsExpanded(!isExpanded);
+                }}
+              >
+                {hasChildren ? (
+                  isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />
+                ) : null}
+              </div>
+              
+              {/* Icon & Tên trang */}
+              <div className="flex items-center truncate">
+                {page.icon && (
+                  <span className="mr-2 text-[#023468]">
+                    <DynamicIcon name={page.icon} size={16} />
+                  </span>
+                )}
+                {!page.icon && (
+                  <span className="mr-2 text-[#82CAFA]">
+                    {hasChildren ? <FolderOpen size={16} /> : <FileText size={16} />}
+                  </span>
+                )}
+                {isEditingTitle ? (
+                  <input 
+                    autoFocus
+                    value={editTitleValue}
+                    onChange={e => setEditTitleValue(e.target.value)}
+                    onBlur={() => {
+                      setIsEditingTitle(false);
+                      if (editTitleValue.trim() && editTitleValue.trim() !== page.title) {
+                        onRenamePage(page.id, editTitleValue.trim());
+                      } else {
+                        setEditTitleValue(page.title);
+                      }
+                    }}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') e.currentTarget.blur();
+                      if (e.key === 'Escape') {
+                        setEditTitleValue(page.title);
+                        setIsEditingTitle(false);
+                      }
+                    }}
+                    className="text-sm flex-1 bg-white border border-[#AED8E6] outline-none px-1 py-0.5 rounded text-[#023468]"
+                    onClick={e => e.stopPropagation()}
+                  />
+                ) : (
+                  <span className="text-sm truncate select-none font-medium text-[#023468]/90">{page.title}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Nút thao tác (hiện khi hover) */}
+            <div className={`flex items-center gap-1 shrink-0 ${isHovered ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
+              <button 
+                className="p-1 hover:bg-[#AED8E6]/50 rounded text-[#023468]/60 hover:text-[#023468]"
+                title="Thêm trang con"
+                onClick={(e) => { e.stopPropagation(); setIsExpanded(true); onAddSubPage(page.id); }}
+              >
+                <Plus size={14} />
+              </button>
+              
+              <div className="relative">
+                <button 
+                  className="p-1 hover:bg-[#AED8E6]/50 rounded text-[#023468]/60 hover:text-[#023468]"
+                  title="Tùy chọn"
+                  onClick={(e) => { e.stopPropagation(); setShowOptions(!showOptions); }}
+                >
+                  <MoreHorizontal size={14} />
+                </button>
+                
+                {showOptions && (
+                  <div className="absolute right-0 top-full mt-1 w-32 bg-white rounded-md shadow-lg border border-[#AED8E6]/40 py-1 z-50">
+                    <button 
+                      className="w-full text-left px-3 py-1.5 text-sm text-[#023468] hover:bg-[#AED8E6]/50 flex items-center gap-2"
+                      onClick={(e) => { e.stopPropagation(); setShowOptions(false); setIsEditingTitle(true); }}
+                    >
+                      <Edit2 size={14} /> Đổi tên
+                    </button>
+                    <button 
+                      className="w-full text-left px-3 py-1.5 text-sm text-[#023468] hover:bg-[#AED8E6]/50 flex items-center gap-2"
+                      onClick={(e) => { e.stopPropagation(); setShowOptions(false); onDuplicatePage(page.id); }}
+                    >
+                      <Copy size={14} /> Nhân bản
+                    </button>
+                    <button 
+                      className="w-full text-left px-3 py-1.5 text-sm text-[#023468] hover:bg-[#AED8E6]/50 flex items-center gap-2"
+                      onClick={(e) => { e.stopPropagation(); setShowOptions(false); onArchivePage(page.id); }}
+                    >
+                      <Archive size={14} /> Lưu trữ
+                    </button>
+                    <button 
+                      className="w-full text-left px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-gray-100"
+                      onClick={(e) => { e.stopPropagation(); setShowOptions(false); onDeletePage(page.id); }}
+                    >
+                      <Trash2 size={14} /> Xóa trang
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Hiển thị đệ quy các trang con */}
+          {hasChildren && isExpanded && (
+            <Droppable droppableId={page.id} type="PAGE">
+              {(provided) => (
+                <div 
+                  className="mt-0.5"
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {page.children.map((child, idx) => (
+                    <PageItem 
+                      key={child.id} index={idx} page={child} level={level + 1} 
+                      onAddSubPage={onAddSubPage} 
+                      onDeletePage={onDeletePage} 
+                      onRenamePage={onRenamePage}
+                      onDuplicatePage={onDuplicatePage}
+                      onArchivePage={onArchivePage}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          )}
         </div>
       )}
-    </div>
+    </Draggable>
   );
 };
 
@@ -188,6 +288,21 @@ const Sidebar = () => {
   
   const [modalOpen, setModalOpen] = useState(false);
   const [targetParentId, setTargetParentId] = useState<string | null>(null);
+  
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  useEffect(() => {
+    // Phím tắt Ctrl+K mở tìm kiếm
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     // Load thông tin user
@@ -210,6 +325,36 @@ const Sidebar = () => {
     };
   }, []);
 
+  const handleDragEnd = async (result: DropResult) => {
+    const { source, destination, draggableId } = result;
+
+    if (!destination) return;
+
+    if (source.droppableId === destination.droppableId && source.index === destination.index) {
+      return;
+    }
+
+    try {
+      if (source.droppableId === destination.droppableId) {
+        // Cùng cấp: Chỉ cập nhật thứ tự
+        await pageService.updateSortOrder(draggableId, destination.index);
+      } else {
+        // Đổi cha
+        const newParentId = destination.droppableId === 'root' ? null : destination.droppableId;
+        await pageService.moveToParent(draggableId, newParentId);
+        
+        // Cập nhật thêm sortOrder nếu có
+        if (destination.index !== undefined) {
+          await pageService.updateSortOrder(draggableId, destination.index);
+        }
+      }
+      fetchPages();
+    } catch (err) {
+      toast.error('Lỗi khi di chuyển trang');
+      console.error(err);
+    }
+  };
+
   const fetchPages = async () => {
     try {
       const res: any = await pageService.getPageTree();
@@ -219,11 +364,17 @@ const Sidebar = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } catch (e) {
+      console.error('Logout failed on backend:', e);
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      navigate('/login');
+    }
   };
 
   const openCreateModal = (parentId: string | null = null) => {
@@ -248,7 +399,7 @@ const Sidebar = () => {
   };
 
   const handleDeletePage = async (id: string) => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa trang này?')) return;
+    if (!window.confirm('Bạn có chắc muốn xóa trang này vĩnh viễn?')) return;
     try {
       const res: any = await pageService.deletePage(id);
       if (res.success) {
@@ -260,24 +411,66 @@ const Sidebar = () => {
     }
   };
 
+  const handleRenamePage = async (id: string, newTitle: string) => {
+    try {
+      await pageService.updateTitle(id, newTitle);
+      fetchPages();
+    } catch (err: any) {
+      toast.error(err?.message || 'Không thể đổi tên trang');
+    }
+  };
+
+  const handleDuplicatePage = async (id: string) => {
+    try {
+      await pageService.duplicatePage(id);
+      toast.success('Đã nhân bản trang');
+      fetchPages();
+    } catch (err: any) {
+      toast.error(err?.message || 'Không thể nhân bản trang');
+    }
+  };
+
+  const handleArchivePage = async (id: string) => {
+    if (!window.confirm('Bạn có chắc muốn đưa trang này vào lưu trữ?')) return;
+    try {
+      await pageService.updateArchive(id, true);
+      toast.success('Đã lưu trữ trang');
+      fetchPages();
+    } catch (err: any) {
+      toast.error(err?.message || 'Không thể lưu trữ trang');
+    }
+  };
+
   return (
     <div className="w-64 h-screen bg-[#F8FBFC] border-r border-[#AED8E6]/40 flex flex-col shadow-[2px_0_8px_-4px_rgba(2,52,104,0.1)] relative">
       
       {/* Header Workspace */}
       <div className="p-4 flex items-center justify-between border-b border-[#AED8E6]/30">
-        <div className="flex items-center gap-2 cursor-pointer hover:bg-[#AED8E6]/20 p-1.5 rounded-lg transition-colors">
-          <img src="/logo-removebg.png" alt="Logo" className="h-8 w-auto drop-shadow-sm" />
-          <span className="font-bold text-[#023468] text-lg tracking-tight">DevMyself</span>
+        <div className=" mx-auto cursor-pointer hover:bg-[#AED8E6]/20 p-1.5 rounded-lg transition-colors">
+        <Link to="/dashboard" className="flex items-end gap-2">
+        <img src="/logo-removebg.png" alt="Logo" className="h-12 w-auto drop-shadow-sm" />
+          <span className="font-bold text-[#023468] text-lg tracking-tight justify-center">DevMyself</span>
+        </Link>
+          
         </div>
       </div>
 
       {/* Search & Quick Actions */}
       <div className="px-3 py-4 space-y-1 border-b border-[#AED8E6]/20">
-        <button className="w-full flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-[#023468]/80 hover:bg-[#AED8E6]/30 rounded-md transition-colors">
-          <Search size={16} className="text-[#82CAFA]" />
-          Tìm kiếm
+        <button 
+          onClick={() => setIsSearchOpen(true)}
+          className="w-full flex items-center justify-between px-2 py-1.5 text-sm font-medium text-[#023468]/80 hover:bg-[#AED8E6]/30 rounded-md transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Search size={16} className="text-[#82CAFA]" />
+            Tìm kiếm
+          </div>
+          <kbd className="hidden group-hover:block text-[10px] bg-white border border-[#AED8E6] text-[#023468]/60 px-1 rounded">Ctrl K</kbd>
         </button>
-        <button className="w-full flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-[#023468]/80 hover:bg-[#AED8E6]/30 rounded-md transition-colors">
+        <button 
+          onClick={() => setIsSettingsOpen(true)}
+          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm font-medium text-[#023468]/80 hover:bg-[#AED8E6]/30 rounded-md transition-colors"
+        >
           <Settings size={16} className="text-[#82CAFA]" />
           Cài đặt
         </button>
@@ -304,14 +497,31 @@ const Sidebar = () => {
               Chưa có trang nào. Hãy tạo mới!
             </div>
           ) : (
-            pages.map(page => (
-              <PageItem 
-                key={page.id} 
-                page={page} 
-                onAddSubPage={openCreateModal}
-                onDeletePage={handleDeletePage}
-              />
-            ))
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="root" type="PAGE">
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    className="min-h-[50px]"
+                  >
+                    {pages.map((page, index) => (
+                      <PageItem 
+                        key={page.id} 
+                        index={index}
+                        page={page} 
+                        onAddSubPage={openCreateModal}
+                        onDeletePage={handleDeletePage}
+                        onRenamePage={handleRenamePage}
+                        onDuplicatePage={handleDuplicatePage}
+                        onArchivePage={handleArchivePage}
+                      />
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           )}
         </div>
       </div>
@@ -342,7 +552,10 @@ const Sidebar = () => {
         {/* Dropdown User */}
         {isUserDropdownOpen && (
           <div className="absolute bottom-full left-3 w-[calc(100%-24px)] mb-2 bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(2,52,104,0.15)] border border-[#AED8E6]/50 py-2 z-50 animate-in slide-in-from-bottom-2 duration-200">
-            <button className="w-full px-4 py-2 text-sm text-[#023468] hover:bg-[#AED8E6]/20 flex items-center gap-3 transition-colors text-left font-medium">
+            <button 
+              onClick={() => { setIsUserDropdownOpen(false); setIsSettingsOpen(true); }}
+              className="w-full px-4 py-2 text-sm text-[#023468] hover:bg-[#AED8E6]/20 flex items-center gap-3 transition-colors text-left font-medium"
+            >
               <UserIcon size={16} className="text-[#82CAFA]" /> Hồ sơ của tôi
             </button>
             <div className="h-px bg-[#AED8E6]/30 my-1 mx-2" />
@@ -361,6 +574,18 @@ const Sidebar = () => {
         onClose={() => setModalOpen(false)} 
         onSubmit={handleCreatePage}
         parentId={targetParentId}
+      />
+
+      <GlobalSearchModal 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)} 
+      />
+
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+        user={user}
+        onUserUpdate={(u) => setUser(u)}
       />
     </div>
   );
