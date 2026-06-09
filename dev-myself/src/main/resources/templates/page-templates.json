@@ -1,0 +1,1027 @@
+[
+  {
+    "code": "BLANK_PAGE",
+    "name": "Blank Page",
+    "description": "Trang trắng để người dùng tự do ghi nội dung.",
+    "pageType": "NOTE",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 1,
+    "defaultContent": {
+      "version": 1,
+      "blocks": []
+    }
+  },
+  {
+    "code": "GENERAL_NOTE",
+    "name": "General Note",
+    "description": "Template ghi chú cơ bản dùng cho mọi loại nội dung.",
+    "pageType": "NOTE",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 2,
+    "defaultContent": {
+      "version": 1,
+      "blocks": [
+        {
+          "id": "template-b1",
+          "type": "heading",
+          "props": {
+            "text": "{{pageTitle}}",
+            "level": 1
+          }
+        },
+        {
+          "id": "template-b2",
+          "type": "paragraph",
+          "props": {
+            "text": "Tóm tắt nội dung chính của ghi chú."
+          }
+        },
+        {
+          "id": "template-b3",
+          "type": "heading",
+          "props": {
+            "text": "Nội dung chính",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b4",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b5",
+          "type": "heading",
+          "props": {
+            "text": "Ghi chú thêm",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b6",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        }
+      ]
+    }
+  },
+  {
+    "code": "LEARNING_NOTE",
+    "name": "Learning Note",
+    "description": "Template ghi chú kiến thức đã học.",
+    "pageType": "NOTE",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 3,
+    "defaultContent": {
+      "version": 1,
+      "blocks": [
+        {
+          "id": "template-b1",
+          "type": "heading",
+          "props": {
+            "text": "{{pageTitle}}",
+            "level": 1
+          }
+        },
+        {
+          "id": "template-b2",
+          "type": "heading",
+          "props": {
+            "text": "Chủ đề",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b3",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b4",
+          "type": "heading",
+          "props": {
+            "text": "Kiến thức chính",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b5",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b6",
+          "type": "heading",
+          "props": {
+            "text": "Ví dụ hoặc tình huống áp dụng",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b7",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b8",
+          "type": "heading",
+          "props": {
+            "text": "Điểm cần ôn lại",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b9",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b10",
+          "type": "heading",
+          "props": {
+            "text": "Tài liệu tham khảo",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b11",
+          "type": "link",
+          "props": {
+            "text": "",
+            "url": ""
+          }
+        }
+      ]
+    }
+  },
+  {
+    "code": "CAREER_GOAL",
+    "name": "Career Goal",
+    "description": "Template định nghĩa và theo dõi mục tiêu nghề nghiệp.",
+    "pageType": "GOAL",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 4,
+    "defaultContent": {
+      "version": 1,
+      "blocks": [
+        {
+          "id": "template-b1",
+          "type": "heading",
+          "props": {
+            "text": "{{pageTitle}}",
+            "level": 1
+          }
+        },
+        {
+          "id": "template-b2",
+          "type": "heading",
+          "props": {
+            "text": "Mục tiêu",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b3",
+          "type": "paragraph",
+          "props": {
+            "text": "Mô tả rõ mục tiêu cần đạt được."
+          }
+        },
+        {
+          "id": "template-b4",
+          "type": "heading",
+          "props": {
+            "text": "Lý do thực hiện",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b5",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b6",
+          "type": "heading",
+          "props": {
+            "text": "Tiêu chí hoàn thành",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b7",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b8",
+          "type": "heading",
+          "props": {
+            "text": "Các mốc thực hiện",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b9",
+          "type": "todo",
+          "props": {
+            "text": "Mốc 1: ",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b10",
+          "type": "todo",
+          "props": {
+            "text": "Mốc 2: ",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b11",
+          "type": "todo",
+          "props": {
+            "text": "Mốc 3: ",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b12",
+          "type": "heading",
+          "props": {
+            "text": "Rủi ro hoặc khó khăn",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b13",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b14",
+          "type": "heading",
+          "props": {
+            "text": "Kế hoạch tiếp theo",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b15",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": false
+          }
+        }
+      ]
+    }
+  },
+  {
+    "code": "PROJECT_PLAN",
+    "name": "Project Plan",
+    "description": "Template lập kế hoạch cho dự án cá nhân.",
+    "pageType": "PROJECT",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 5,
+    "defaultContent": {
+      "version": 1,
+      "blocks": [
+        {
+          "id": "template-b1",
+          "type": "heading",
+          "props": {
+            "text": "{{pageTitle}}",
+            "level": 1
+          }
+        },
+        {
+          "id": "template-b2",
+          "type": "heading",
+          "props": {
+            "text": "Tổng quan dự án",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b3",
+          "type": "paragraph",
+          "props": {
+            "text": "Mô tả ngắn gọn dự án, mục đích và vấn đề cần giải quyết."
+          }
+        },
+        {
+          "id": "template-b4",
+          "type": "heading",
+          "props": {
+            "text": "Mục tiêu dự án",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b5",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b6",
+          "type": "heading",
+          "props": {
+            "text": "Phạm vi chức năng",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b7",
+          "type": "todo",
+          "props": {
+            "text": "Chức năng 1: ",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b8",
+          "type": "todo",
+          "props": {
+            "text": "Chức năng 2: ",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b9",
+          "type": "todo",
+          "props": {
+            "text": "Chức năng 3: ",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b10",
+          "type": "heading",
+          "props": {
+            "text": "Database và API cần xây dựng",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b11",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b12",
+          "type": "heading",
+          "props": {
+            "text": "Task list",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b13",
+          "type": "todo",
+          "props": {
+            "text": "Phân tích yêu cầu",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b14",
+          "type": "todo",
+          "props": {
+            "text": "Thiết kế database",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b15",
+          "type": "todo",
+          "props": {
+            "text": "Xây dựng backend",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b16",
+          "type": "todo",
+          "props": {
+            "text": "Xây dựng frontend",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b17",
+          "type": "heading",
+          "props": {
+            "text": "Liên kết tài liệu",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b18",
+          "type": "link",
+          "props": {
+            "text": "GitHub",
+            "url": ""
+          }
+        },
+        {
+          "id": "template-b19",
+          "type": "link",
+          "props": {
+            "text": "Demo",
+            "url": ""
+          }
+        }
+      ]
+    }
+  },
+  {
+    "code": "DAILY_JOURNAL",
+    "name": "Daily Journal",
+    "description": "Template nhật ký ngày để ghi lại quá trình học tập và phát triển.",
+    "pageType": "JOURNAL",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 6,
+    "defaultContent": {
+      "version": 1,
+      "blocks": [
+        {
+          "id": "template-b1",
+          "type": "heading",
+          "props": {
+            "text": "Daily Journal - {{today}}",
+            "level": 1
+          }
+        },
+        {
+          "id": "template-b2",
+          "type": "heading",
+          "props": {
+            "text": "Hôm nay tôi đã làm gì?",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b3",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b4",
+          "type": "heading",
+          "props": {
+            "text": "Tôi học được gì?",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b5",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b6",
+          "type": "heading",
+          "props": {
+            "text": "Vấn đề gặp phải",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b7",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b8",
+          "type": "heading",
+          "props": {
+            "text": "Việc cần làm ngày mai",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b9",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b10",
+          "type": "heading",
+          "props": {
+            "text": "Ghi chú thêm",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b11",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        }
+      ]
+    }
+  },
+  {
+    "code": "WEEKLY_REVIEW",
+    "name": "Weekly Review",
+    "description": "Template tổng kết tuần và lập kế hoạch tuần tiếp theo.",
+    "pageType": "JOURNAL",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 7,
+    "defaultContent": {
+      "version": 1,
+      "blocks": [
+        {
+          "id": "template-b1",
+          "type": "heading",
+          "props": {
+            "text": "Weekly Review - Week {{currentWeek}}",
+            "level": 1
+          }
+        },
+        {
+          "id": "template-b2",
+          "type": "heading",
+          "props": {
+            "text": "Việc đã hoàn thành",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b3",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": true
+          }
+        },
+        {
+          "id": "template-b4",
+          "type": "heading",
+          "props": {
+            "text": "Việc chưa hoàn thành",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b5",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b6",
+          "type": "heading",
+          "props": {
+            "text": "Bài học trong tuần",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b7",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b8",
+          "type": "heading",
+          "props": {
+            "text": "Kế hoạch tuần tới",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b9",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": false
+          }
+        }
+      ]
+    }
+  },
+  {
+    "code": "CAREER_ROADMAP",
+    "name": "Career Roadmap",
+    "description": "Template lập lộ trình nghề nghiệp theo giai đoạn.",
+    "pageType": "ROADMAP",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 8,
+    "defaultContent": {
+      "version": 1,
+      "blocks": [
+        {
+          "id": "template-b1",
+          "type": "heading",
+          "props": {
+            "text": "{{pageTitle}}",
+            "level": 1
+          }
+        },
+        {
+          "id": "template-b2",
+          "type": "heading",
+          "props": {
+            "text": "Định hướng tổng quan",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b3",
+          "type": "paragraph",
+          "props": {
+            "text": "Mô tả định hướng nghề nghiệp dài hạn."
+          }
+        },
+        {
+          "id": "template-b4",
+          "type": "heading",
+          "props": {
+            "text": "Giai đoạn 1",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b5",
+          "type": "paragraph",
+          "props": {
+            "text": "Thời gian: \nMục tiêu: \nKết quả kỳ vọng: "
+          }
+        },
+        {
+          "id": "template-b6",
+          "type": "todo",
+          "props": {
+            "text": "Việc cần làm trong giai đoạn 1",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b7",
+          "type": "heading",
+          "props": {
+            "text": "Giai đoạn 2",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b8",
+          "type": "paragraph",
+          "props": {
+            "text": "Thời gian: \nMục tiêu: \nKết quả kỳ vọng: "
+          }
+        },
+        {
+          "id": "template-b9",
+          "type": "todo",
+          "props": {
+            "text": "Việc cần làm trong giai đoạn 2",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b10",
+          "type": "heading",
+          "props": {
+            "text": "Kỹ năng cần phát triển",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b11",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b12",
+          "type": "heading",
+          "props": {
+            "text": "Nguồn lực cần chuẩn bị",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b13",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        }
+      ]
+    }
+  },
+  {
+    "code": "TASK_LIST",
+    "name": "Task List",
+    "description": "Template danh sách công việc đơn giản.",
+    "pageType": "TASK_LIST",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 9,
+    "defaultContent": {
+      "columns": [
+        {
+          "id": "todo",
+          "title": "Cần làm",
+          "tasks": [
+            { "id": "t1", "content": "Lên danh sách việc cần làm" },
+            { "id": "t2", "content": "Phân chia độ ưu tiên" }
+          ]
+        },
+        {
+          "id": "in-progress",
+          "title": "Đang làm",
+          "tasks": [
+            { "id": "t3", "content": "Nghiên cứu tài liệu" }
+          ]
+        },
+        {
+          "id": "done",
+          "title": "Đã xong",
+          "tasks": []
+        }
+      ]
+    }
+  },
+  {
+    "code": "KNOWLEDGE_BASE",
+    "name": "Knowledge Base",
+    "description": "Template lưu trữ kiến thức theo chủ đề.",
+    "pageType": "KNOWLEDGE",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 10,
+    "defaultContent": {
+      "version": 1,
+      "blocks": [
+        {
+          "id": "template-b1",
+          "type": "heading",
+          "props": {
+            "text": "{{pageTitle}}",
+            "level": 1
+          }
+        },
+        {
+          "id": "template-b2",
+          "type": "heading",
+          "props": {
+            "text": "Tổng quan",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b3",
+          "type": "paragraph",
+          "props": {
+            "text": "Mô tả ngắn về chủ đề kiến thức."
+          }
+        },
+        {
+          "id": "template-b4",
+          "type": "heading",
+          "props": {
+            "text": "Khái niệm chính",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b5",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b6",
+          "type": "heading",
+          "props": {
+            "text": "Quy trình hoặc cách hoạt động",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b7",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b8",
+          "type": "heading",
+          "props": {
+            "text": "Ví dụ thực tế",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b9",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        },
+        {
+          "id": "template-b10",
+          "type": "heading",
+          "props": {
+            "text": "Câu hỏi cần làm rõ",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b11",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b12",
+          "type": "heading",
+          "props": {
+            "text": "Nguồn tham khảo",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b13",
+          "type": "link",
+          "props": {
+            "text": "",
+            "url": ""
+          }
+        }
+      ]
+    }
+  },
+  {
+    "code": "INTERVIEW_PREP",
+    "name": "Interview Prep",
+    "description": "Template chuẩn bị phỏng vấn.",
+    "pageType": "NOTE",
+    "version": 1,
+    "isSystem": true,
+    "sortOrder": 11,
+    "defaultContent": {
+      "version": 1,
+      "blocks": [
+        {
+          "id": "template-b1",
+          "type": "heading",
+          "props": {
+            "text": "{{pageTitle}}",
+            "level": 1
+          }
+        },
+        {
+          "id": "template-b2",
+          "type": "heading",
+          "props": {
+            "text": "Thông tin buổi phỏng vấn",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b3",
+          "type": "paragraph",
+          "props": {
+            "text": "Công ty: \nVị trí: \nThời gian: \nHình thức: "
+          }
+        },
+        {
+          "id": "template-b4",
+          "type": "heading",
+          "props": {
+            "text": "Thông tin cần tìm hiểu",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b5",
+          "type": "todo",
+          "props": {
+            "text": "Tìm hiểu công ty",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b6",
+          "type": "todo",
+          "props": {
+            "text": "Đọc mô tả công việc",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b7",
+          "type": "todo",
+          "props": {
+            "text": "Chuẩn bị phần giới thiệu bản thân",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b8",
+          "type": "heading",
+          "props": {
+            "text": "Câu hỏi có thể gặp",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b9",
+          "type": "paragraph",
+          "props": {
+            "text": "Q: \nA: "
+          }
+        },
+        {
+          "id": "template-b10",
+          "type": "heading",
+          "props": {
+            "text": "Câu hỏi dành cho nhà tuyển dụng",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b11",
+          "type": "todo",
+          "props": {
+            "text": "",
+            "checked": false
+          }
+        },
+        {
+          "id": "template-b12",
+          "type": "heading",
+          "props": {
+            "text": "Ghi chú sau phỏng vấn",
+            "level": 2
+          }
+        },
+        {
+          "id": "template-b13",
+          "type": "paragraph",
+          "props": {
+            "text": ""
+          }
+        }
+      ]
+    }
+  }
+]
