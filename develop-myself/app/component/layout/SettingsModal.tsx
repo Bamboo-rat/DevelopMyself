@@ -57,8 +57,8 @@ export const SettingsModal = ({ isOpen, onClose, user, onUserUpdate }: SettingsM
         setAvatarUrl(res.data.url);
         toast.success('Tải ảnh thành công');
       }
-    } catch (err) {
-      toast.error('Lỗi khi tải ảnh lên');
+    } catch (err: any) {
+      toast.error(err?.message || 'Lỗi khi tải ảnh lên');
     } finally {
       setIsUploading(false);
     }
@@ -80,7 +80,7 @@ export const SettingsModal = ({ isOpen, onClose, user, onUserUpdate }: SettingsM
         onUserUpdate(updatedUser);
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Lỗi khi cập nhật hồ sơ');
+      toast.error(err?.message || 'Lỗi khi cập nhật hồ sơ');
     } finally {
       setIsSavingProfile(false);
     }
@@ -108,7 +108,7 @@ export const SettingsModal = ({ isOpen, onClose, user, onUserUpdate }: SettingsM
         setPasswords({ oldPassword: '', newPassword: '', confirmPassword: '' });
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Lỗi khi đổi mật khẩu');
+      toast.error(err?.message || 'Lỗi khi đổi mật khẩu');
     } finally {
       setIsSavingPassword(false);
     }
