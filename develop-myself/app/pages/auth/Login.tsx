@@ -20,11 +20,7 @@ export default function Login() {
       // Gọi API đăng nhập (ApiResponse đã được bọc ở interceptor để trả về .data trực tiếp)
       const res: any = await authService.login(formData);
 
-      if (res.success && res.data?.accessToken) {
-        // Lưu token
-        localStorage.setItem('token', res.data.accessToken);
-        localStorage.setItem('refreshToken', res.data.refreshToken);
-        
+      if (res.success) {
         // Lưu thông tin user để dùng sau này (hiển thị avatar, tên...)
         if (res.data.user) {
           localStorage.setItem('user', JSON.stringify(res.data.user));

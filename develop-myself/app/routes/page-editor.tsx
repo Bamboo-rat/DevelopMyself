@@ -1,5 +1,6 @@
 import type { Route } from "./+types/page-editor";
 import PageEditor from "~/pages/PageEditor";
+import { useParams } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,5 +9,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function PageEditorRoute() {
-  return <PageEditor />;
+  const params = useParams();
+  return <PageEditor key={params.pageId} />;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, FileText, Target, Map, BookOpen, KanbanSquare, X, FolderOpen } from 'lucide-react';
+import { Search, FileText, Target, Map, BookOpen, KanbanSquare, ListTodo, Brain, X } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { pageService, type PageTreeResponse } from '~/service/pageService';
 import { DynamicIcon } from '~/component/ui/DynamicIcon';
@@ -12,10 +12,12 @@ interface GlobalSearchModalProps {
 const PAGE_TYPES = [
   { value: '', label: 'Tất cả' },
   { value: 'NOTE', label: 'Ghi chú' },
-  { value: 'PROJECT', label: 'Dự án' },
   { value: 'GOAL', label: 'Mục tiêu' },
-  { value: 'ROADMAP', label: 'Lộ trình' },
+  { value: 'PROJECT', label: 'Dự án' },
   { value: 'JOURNAL', label: 'Nhật ký' },
+  { value: 'ROADMAP', label: 'Lộ trình' },
+  { value: 'TASK_LIST', label: 'Công việc' },
+  { value: 'KNOWLEDGE', label: 'Kiến thức' },
 ];
 
 export const GlobalSearchModal = ({ isOpen, onClose }: GlobalSearchModalProps) => {
@@ -72,6 +74,8 @@ export const GlobalSearchModal = ({ isOpen, onClose }: GlobalSearchModalProps) =
       case 'ROADMAP': return <Map size={18} />;
       case 'JOURNAL': return <BookOpen size={18} />;
       case 'PROJECT': return <KanbanSquare size={18} />;
+      case 'TASK_LIST': return <ListTodo size={18} />;
+      case 'KNOWLEDGE': return <Brain size={18} />;
       default: return <FileText size={18} />;
     }
   };

@@ -100,11 +100,11 @@ const CreatePageModal = ({ isOpen, onClose, onSubmit, parentId }: any) => {
                 className="w-full px-4 py-2 border border-[#AED8E6] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#82CAFA] text-[#023468] bg-white"
               >
                 <option value="NOTE">Ghi chú (Note)</option>
-                <option value="TASK_LIST">Công việc (Task List)</option>
-                <option value="PROJECT">Dự án (Project)</option>
                 <option value="GOAL">Mục tiêu (Goal)</option>
+                <option value="PROJECT">Dự án (Project)</option>
                 <option value="JOURNAL">Nhật ký (Journal)</option>
                 <option value="ROADMAP">Lộ trình (Roadmap)</option>
+                <option value="TASK_LIST">Công việc (Task List)</option>
                 <option value="KNOWLEDGE">Kiến thức (Knowledge)</option>
               </select>
             </div>

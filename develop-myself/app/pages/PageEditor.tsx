@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import { pageService } from '~/service/pageService';
 import { pageTemplateService, type PageTemplateResponse } from '~/service/pageTemplateService';
 import toast from 'react-hot-toast';
-import { FileText, LayoutTemplate, Loader2 } from 'lucide-react';
+import { FileText, LayoutTemplate, Loader2, FolderOpen } from 'lucide-react';
 import { PageHeader } from '~/component/features/PageHeader';
 import { NotePageView } from '~/component/views/NotePageView';
 import { TaskBoardView } from '~/component/views/TaskBoardView';
@@ -216,6 +216,20 @@ const PageRenderer = () => {
 
   if (!page) {
     return <div className="p-8 text-center text-gray-500">Trang không tồn tại hoặc đã bị xóa.</div>;
+  }
+
+  if (page.pageKind === 'FOLDER') {
+    return (
+      <div className="h-full w-full flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in duration-300">
+        <FolderOpen size={64} className="text-[#82CAFA] mb-6 opacity-80" />
+        <h2 className="text-2xl font-bold text-[#023468] mb-3">{page.title}</h2>
+        <p className="text-[#023468]/60 max-w-md">
+          Đây là một thư mục dùng để nhóm các trang con.
+          <br/>
+          Vui lòng mở Sidebar bên trái để xem nội dung bên trong thư mục này.
+        </p>
+      </div>
+    );
   }
 
   const isEmptyPage = !page.content || Object.keys(page.content).length === 0;
