@@ -1,19 +1,75 @@
 import React, { useEffect, useState } from 'react';
 import { BlockNoteView } from "@blocknote/mantine";
-import { useCreateBlockNote, SuggestionMenuController, getDefaultReactSlashMenuItems } from "@blocknote/react";
-import { BlockNoteSchema, defaultBlockSpecs, filterSuggestionItems } from "@blocknote/core";
+import { 
+  useCreateBlockNote, 
+  SuggestionMenuController, 
+  getDefaultReactSlashMenuItems,
+  FormattingToolbar,
+  FormattingToolbarController,
+  BlockTypeSelect,
+  BasicTextStyleButton,
+  TextAlignButton,
+  ColorStyleButton,
+  NestBlockButton,
+  UnnestBlockButton,
+  CreateLinkButton,
+  useBlockNoteEditor,
+  useActiveStyles,
+  createReactStyleSpec
+} from "@blocknote/react";
+import { BlockNoteSchema, defaultBlockSpecs, defaultStyleSpecs, filterSuggestionItems } from "@blocknote/core";
 import { type PartialBlock } from "@blocknote/core";
 import { DrawingBlock } from "./DrawingBlock";
 import { PenTool } from "lucide-react";
 import { userService } from "~/service/userService";
 
-// Define schema with custom drawing block
+const FontSizeStyle = createReactStyleSpec(
+  {
+    type: "fontSize",
+    propSchema: "string",
+  },
+  {
+    render: (props) => (
+      <span ref={props.contentRef} style={{ fontSize: props.value }} />
+    ),
+  }
+);
+
+// Define schema with custom drawing block and font size style
 const schema = BlockNoteSchema.create({
   blockSpecs: {
     ...defaultBlockSpecs,
     drawing: DrawingBlock(),
   },
+  styleSpecs: {
+    ...defaultStyleSpecs,
+    fontSize: FontSizeStyle,
+  }
 });
+
+const FontSizeSelect = () => {
+  const editor = useBlockNoteEditor(schema);
+  const activeStyles = useActiveStyles(editor);
+  const currentSize = activeStyles.fontSize || "16px";
+
+  return (
+    <select 
+      value={currentSize}
+      onChange={(e) => {
+        editor.addStyles({ fontSize: e.target.value });
+      }}
+      className="mx-1 h-7 border border-gray-200 rounded text-xs bg-white text-gray-700 outline-none focus:border-blue-300 cursor-pointer"
+    >
+      <option value="12px">12px</option>
+      <option value="14px">14px</option>
+      <option value="16px">16px</option>
+      <option value="18px">18px</option>
+      <option value="20px">20px</option>
+      <option value="24px">24px</option>
+      <option value="30px">30px</option>
+    </select>
+  );
+};
 
 const insertDrawing = (editor: typeof schema.BlockNoteEditor) => ({
   title: "Drawing / Flowchart",
@@ -48,7 +104,6 @@ interface NotionEditorProps {
 
 export const NotionEditor = ({ initialBlocks, onSave }: NotionEditorProps) => {
   const [isMounted, setIsMounted] = useState(false);
-  const [fontSize, setFontSize] = useState("16px");
 
   useEffect(() => {
     Promise.all([
@@ -57,18 +112,7 @@ export const NotionEditor = ({ initialBlocks, onSave }: NotionEditorProps) => {
     ]).then(() => {
       setIsMounted(true);
     });
-
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("bn-font-size");
-      if (saved) setFontSize(saved);
-    }
   }, []);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && isMounted) {
-      localStorage.setItem("bn-font-size", fontSize);
-    }
-  }, [fontSize, isMounted]);
 
   const editor = useCreateBlockNote({
     schema,
@@ -105,24 +149,12 @@ export const NotionEditor = ({ initialBlocks, onSave }: NotionEditorProps) => {
   }
 
   return (
-    <div className="flex flex-col w-full" style={{ fontSize, '--bn-font-size': fontSize } as any}>
-      <div className="flex justify-end mb-2 px-10">
-        <select 
-          value={fontSize} 
-          onChange={(e) => setFontSize(e.target.value)}
-          className="border border-gray-200 rounded-md p-1.5 text-sm bg-white text-gray-700 outline-none focus:border-blue-300 transition-colors cursor-pointer"
-        >
-          <option value="14px">Cỡ chữ: Nhỏ (14px)</option>
-          <option value="16px">Cỡ chữ: Vừa (16px)</option>
-          <option value="18px">Cỡ chữ: Lớn (18px)</option>
-          <option value="20px">Cỡ chữ: Rất lớn (20px)</option>
-          <option value="24px">Cỡ chữ: Khổng lồ (24px)</option>
-        </select>
-      </div>
+    <div className="flex flex-col w-full">
       <BlockNoteView
         editor={editor}
         theme="light"
         slashMenu={false}
+        formattingToolbar={false}
         onChange={() => {
           if ((window as any).saveContentTimeout) clearTimeout((window as any).saveContentTimeout);
           (window as any).saveContentTimeout = setTimeout(() => {
@@ -138,6 +170,26 @@ export const NotionEditor = ({ initialBlocks, onSave }: NotionEditorProps) => {
               query
             )
           }
+        />
+        <FormattingToolbarController
+          formattingToolbar={() => (
+            <FormattingToolbar>
+              <BlockTypeSelect key="blockTypeSelect" />
+              <FontSizeSelect key="fontSizeSelect" />
+              <BasicTextStyleButton basicTextStyle="bold" key="boldStyleButton" />
+              <BasicTextStyleButton basicTextStyle="italic" key="italicStyleButton" />
+              <BasicTextStyleButton basicTextStyle="underline" key="underlineStyleButton" />
+              <BasicTextStyleButton basicTextStyle="strike" key="strikeStyleButton" />
+              <BasicTextStyleButton key="codeStyleButton" basicTextStyle="code" />
+              <TextAlignButton textAlignment="left" key="textAlignLeftButton" />
+              <TextAlignButton textAlignment="center" key="textAlignCenterButton" />
+              <TextAlignButton textAlignment="right" key="textAlignRightButton" />
+              <ColorStyleButton key="colorStyleButton" />
+              <NestBlockButton key="nestBlockButton" />
+              <UnnestBlockButton key="unnestBlockButton" />
+              <CreateLinkButton key="createLinkButton" />
+            </FormattingToolbar>
+          )}
         />
       </BlockNoteView>
     </div>

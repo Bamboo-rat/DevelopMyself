@@ -22,8 +22,5 @@ export default defineConfig({
   plugins: [chromeDevToolsProbe(), tailwindcss(), reactRouter()],
   resolve: {
     tsconfigPaths: true,
-  },
-  ssr: {
-    noExternal: ['@prisma/client', '.prisma/client']
   }
 });
