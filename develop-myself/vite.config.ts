@@ -24,18 +24,6 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   ssr: {
-    // Prisma client được generate dạng CJS — cần external để Node.js require() thay vì Vite bundle
-    external: [
-      "@prisma/client",
-      ".prisma/client",
-      "@neondatabase/serverless",
-      "@prisma/adapter-neon",
-      "bcryptjs",
-      "cloudinary",
-      "cookie",
-    ],
-  },
-  optimizeDeps: {
-    exclude: ["@prisma/client", ".prisma/client"],
-  },
+    noExternal: ['@prisma/client', '.prisma/client']
+  }
 });

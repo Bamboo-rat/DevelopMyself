@@ -3,13 +3,15 @@
  */
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
+import type { PrismaClient as PrismaClientType } from '@prisma/client';
+
+const PrismaClientClass = PrismaClient;
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { neonConfig } from '@neondatabase/serverless';
 import ws from 'ws';
 
 neonConfig.webSocketConstructor = ws;
 
-type PrismaClientType = InstanceType<typeof PrismaClient>;
 
 declare global {
   // eslint-disable-next-line no-var
