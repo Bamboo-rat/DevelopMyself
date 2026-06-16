@@ -50,7 +50,7 @@ const schema = BlockNoteSchema.create({
 const FontSizeSelect = () => {
   const editor = useBlockNoteEditor(schema);
   const activeStyles = useActiveStyles(editor);
-  const currentSize = activeStyles.fontSize || "16px";
+  const currentSize = activeStyles?.fontSize || "16px";
 
   return (
     <select 
@@ -102,6 +102,25 @@ interface NotionEditorProps {
   onSave: (blocks: any[]) => void;
 }
 
+const CustomFormattingToolbar = () => (
+  <FormattingToolbar>
+    <BlockTypeSelect key="blockTypeSelect" />
+    <FontSizeSelect key="fontSizeSelect" />
+    <BasicTextStyleButton basicTextStyle="bold" key="boldStyleButton" />
+    <BasicTextStyleButton basicTextStyle="italic" key="italicStyleButton" />
+    <BasicTextStyleButton basicTextStyle="underline" key="underlineStyleButton" />
+    <BasicTextStyleButton basicTextStyle="strike" key="strikeStyleButton" />
+    <BasicTextStyleButton key="codeStyleButton" basicTextStyle="code" />
+    <TextAlignButton textAlignment="left" key="textAlignLeftButton" />
+    <TextAlignButton textAlignment="center" key="textAlignCenterButton" />
+    <TextAlignButton textAlignment="right" key="textAlignRightButton" />
+    <ColorStyleButton key="colorStyleButton" />
+    <NestBlockButton key="nestBlockButton" />
+    <UnnestBlockButton key="unnestBlockButton" />
+    <CreateLinkButton key="createLinkButton" />
+  </FormattingToolbar>
+);
+
 export const NotionEditor = ({ initialBlocks, onSave }: NotionEditorProps) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -133,9 +152,6 @@ export const NotionEditor = ({ initialBlocks, onSave }: NotionEditorProps) => {
 
       const hasHtml = event.clipboardData?.types.includes("text/html");
 
-      // If inside a table and pasting HTML (like from Excel),
-      // we return undefined to let the default ProseMirror (and prosemirror-tables) paste handler take over.
-      // This allows it to map columns and rows properly instead of pasting as blocks inside a cell.
       if (isInTable && hasHtml) {
         return undefined;
       }
@@ -172,24 +188,7 @@ export const NotionEditor = ({ initialBlocks, onSave }: NotionEditorProps) => {
           }
         />
         <FormattingToolbarController
-          formattingToolbar={() => (
-            <FormattingToolbar>
-              <BlockTypeSelect key="blockTypeSelect" />
-              <FontSizeSelect key="fontSizeSelect" />
-              <BasicTextStyleButton basicTextStyle="bold" key="boldStyleButton" />
-              <BasicTextStyleButton basicTextStyle="italic" key="italicStyleButton" />
-              <BasicTextStyleButton basicTextStyle="underline" key="underlineStyleButton" />
-              <BasicTextStyleButton basicTextStyle="strike" key="strikeStyleButton" />
-              <BasicTextStyleButton key="codeStyleButton" basicTextStyle="code" />
-              <TextAlignButton textAlignment="left" key="textAlignLeftButton" />
-              <TextAlignButton textAlignment="center" key="textAlignCenterButton" />
-              <TextAlignButton textAlignment="right" key="textAlignRightButton" />
-              <ColorStyleButton key="colorStyleButton" />
-              <NestBlockButton key="nestBlockButton" />
-              <UnnestBlockButton key="unnestBlockButton" />
-              <CreateLinkButton key="createLinkButton" />
-            </FormattingToolbar>
-          )}
+          formattingToolbar={CustomFormattingToolbar}
         />
       </BlockNoteView>
     </div>
